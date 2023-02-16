@@ -114,7 +114,7 @@ DNS = 8.8.8.8
 MTU = 1420
 [Peer]
 PublicKey = $c2
-AllowedIPs = 10.0.0.2/24
+AllowedIPs = 10.0.0.2/32
 EOF
  
     config_client
@@ -133,12 +133,12 @@ add_user(){
     ipnum=$(grep Allowed /etc/wireguard/wg0.conf | tail -1 | awk -F '[ ./]' '{print $6}')
     newnum=$((10#${ipnum}+1))
     sed -i 's%^PrivateKey.*$%'"PrivateKey = $(cat temprikey)"'%' $newname.conf
-    sed -i 's%^Address.*$%'"Address = 10.0.0.$newnum\/24"'%' $newname.conf
+    sed -i 's%^Address.*$%'"Address = 10.0.0.$newnum\/32"'%' $newname.conf
  
 cat >> /etc/wireguard/wg0.conf <<-EOF
 [Peer]
 PublicKey = $(cat tempubkey)
-AllowedIPs = 10.0.0.$newnum/24
+AllowedIPs = 10.0.0.$newnum/32
 EOF
     wg set wg0 peer $(cat tempubkey) allowed-ips 10.0.0.$newnum/32
     echo -e "\033[37;41m添加完成，文件：/etc/wireguard/$newname.conf\033[0m"
